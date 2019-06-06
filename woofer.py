@@ -1,18 +1,15 @@
 import os
 import random
 import twitter
-from dotenv import load_dotenv
 from azure.cognitiveservices.search.imagesearch import ImageSearchAPI
 from msrest.authentication import CognitiveServicesCredentials
 
-load_dotenv()
+client = ImageSearchAPI(CognitiveServicesCredentials(os.environ["BING_KEY"]))
 
-client = ImageSearchAPI(CognitiveServicesCredentials(os.getenv("BING_KEY")))
-
-c_key = os.getenv("TWITTER_CONSUMER_KEY")
-c_secret = os.getenv("TWITTER_CONSUMER_SECRET")
-a_token_key = os.getenv("TWITTER_ACCESS_KEY")
-a_token_secret = os.getenv("TWITTER_ACCESS_SECRET")
+c_key = os.environ["TWITTER_CONSUMER_KEY"]
+c_secret = os.environ["TWITTER_CONSUMER_SECRET"]
+a_token_key = os.environ["TWITTER_ACCESS_KEY"]
+a_token_secret = os.environ["TWITTER_ACCESS_SECRET"]
 
 api = twitter.Api(c_key, c_secret, a_token_key, a_token_secret)
 
