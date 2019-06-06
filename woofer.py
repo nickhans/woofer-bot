@@ -20,4 +20,4 @@ if image_results.value:
   random_img_index = random.randint(0, len(image_results.value) - 1)
   random_img_url = image_results.value[random_img_index].content_url
   print("Image at index {}: {}".format(random_img_index, random_img_url))
-  api.PostUpdate(". @CarterAlzamora", media=random_img_url)
+  api.PostUpdate(". @CarterAlzamora @Houghelpuf", media=random_img_url)
