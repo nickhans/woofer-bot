@@ -1,0 +1,2 @@
+python_twitter==3.5
+azure-cognitiveservices-search-imagesearch==1.0.0
