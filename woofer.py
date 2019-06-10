@@ -46,6 +46,6 @@ while not tweeted:
 print("Tweet successful")
 
 with open('image_file.txt', 'w') as image_file:
-  image_file.write(json.dumps(image_urls))
+  image_file.write(json.dumps(url_list))
 
 print("Process Complete")
