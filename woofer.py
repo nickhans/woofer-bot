@@ -37,15 +37,15 @@ tweeted = False
 while not tweeted:
   try:
     url = url_list.pop(0)
-    print("Attempting tweet of image url: {}", url)
+    print("Attempting tweet of image url: {}".format(url))
     api.PostUpdate(". @CarterAlzamora @Houghelpuf", media=url)
     tweeted = True
   except twitter.error.TwitterError as err:
-    print("Tweet failed with error: {}", err)
+    print("Tweet failed with error: {}".format(err))
 
 print("Tweet successful")
 
-with open('image_file.txt', 'a') as image_file:
+with open('image_file.txt', 'w') as image_file:
   image_file.write(json.dumps(image_urls))
 
 print("Process Complete")
