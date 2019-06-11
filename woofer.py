@@ -32,7 +32,7 @@ if (url_count == 0 or url_count < image_index):
   image_results.extend(client.images.search(query="puppies").value)
 
   for image in image_results:
-    cur.execute("INSERT INTO images(url) VALUES(%s)", image.content_url)
+    cur.execute("INSERT INTO images(url) VALUES(%s)", [image.content_url])
 
   conn.commit()
 
