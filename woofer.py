@@ -12,7 +12,9 @@ a_token_secret = os.environ["TWITTER_ACCESS_SECRET"]
 
 api = twitter.Api(c_key, c_secret, a_token_key, a_token_secret)
 
-if (os.stat('image_file.txt').st_size == 0):
+image_index = int(os.environ["IMAGE_INDEX"])
+
+if (os.path.getsize("image_file.txt") == 0):
 
   print("FETCHING NEW URLS")
   client = ImageSearchAPI(CognitiveServicesCredentials(os.environ["BING_KEY"]))
@@ -32,11 +34,15 @@ url_list = []
 with open('image_file.txt', 'r') as image_file:
   url_list = json.load(image_file)
 
+if (image_index > len(url_list)):
+  image_index = 0
+
 tweeted = False
 
 while not tweeted:
   try:
-    url = url_list.pop(0)
+    url = url_list[image_index]
+    image_index += 1
     print("Attempting tweet of image url: {}".format(url))
     api.PostUpdate(". @CarterAlzamora @Houghelpuf", media=url)
     tweeted = True
@@ -45,7 +51,6 @@ while not tweeted:
 
 print("Tweet successful")
 
-with open('image_file.txt', 'w') as image_file:
-  image_file.write(json.dumps(url_list))
+os.environ["IMAGE_INDEX"] = str(image_index)
 
 print("Process Complete")
