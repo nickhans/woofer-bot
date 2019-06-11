@@ -54,7 +54,7 @@ print("Tweet successful")
 cur.execute("UPDATE index SET img_index = %s;", [image_index])
 conn.commit()
 
-curr.close()
+cur.close()
 conn.close()
 
 print("Process Complete")
