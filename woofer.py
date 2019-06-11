@@ -22,7 +22,7 @@ image_index = cur.fetchone()[0]
 cur.execute("SELECT COUNT(*) FROM images;")
 url_count = cur.fetchone()[0]
 
-if (url_count == 0 || url_count < image_index):
+if (url_count == 0 or url_count < image_index):
 
   print("FETCHING NEW URLS")
   client = ImageSearchAPI(CognitiveServicesCredentials(os.environ["BING_KEY"]))
