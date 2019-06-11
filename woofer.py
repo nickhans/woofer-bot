@@ -2,6 +2,7 @@ import os
 import json
 import random
 import twitter
+import psycopg2
 from azure.cognitiveservices.search.imagesearch import ImageSearchAPI
 from msrest.authentication import CognitiveServicesCredentials
 
@@ -12,31 +13,36 @@ a_token_secret = os.environ["TWITTER_ACCESS_SECRET"]
 
 api = twitter.Api(c_key, c_secret, a_token_key, a_token_secret)
 
-if (os.stat('image_file.txt').st_size == 0):
+conn = psycopg2.connect(os.environ["DATABASE_URL"], sslmode='require')
+cur = conn.cursor()
+
+cur.execute("SELECT * FROM index;")
+image_index = cur.fetchone()[0]
+
+cur.execute("SELECT COUNT(*) FROM images;")
+url_count = cur.fetchone()[0]
+
+if (url_count == 0 or url_count < image_index):
 
   print("FETCHING NEW URLS")
   client = ImageSearchAPI(CognitiveServicesCredentials(os.environ["BING_KEY"]))
 
   image_results = []
-  image_urls = []
   image_results.extend(client.images.search(query="cute dog").value)
   image_results.extend(client.images.search(query="puppies").value)
 
   for image in image_results:
-    image_urls.append(image.content_url)
+    cur.execute("INSERT INTO images(url) VALUES(%s)", [image.content_url])
 
-  with open('image_file.txt', 'a') as image_file:
-    image_file.write(json.dumps(image_urls))
-
-url_list = []
-with open('image_file.txt', 'r') as image_file:
-  url_list = json.load(image_file)
+  conn.commit()
 
 tweeted = False
 
 while not tweeted:
   try:
-    url = url_list.pop(0)
+    cur.execute("SELECT url FROM images WHERE id=%s;", [image_index])
+    url = cur.fetchone()[0]
+    image_index += 1
     print("Attempting tweet of image url: {}".format(url))
     api.PostUpdate(". @CarterAlzamora @Houghelpuf", media=url)
     tweeted = True
@@ -45,7 +51,10 @@ while not tweeted:
 
 print("Tweet successful")
 
-with open('image_file.txt', 'w') as image_file:
-  image_file.write(json.dumps(url_list))
+cur.execute("UPDATE index SET img_index = %s;", [image_index])
+conn.commit()
+
+cur.close()
+conn.close()
 
 print("Process Complete")
