@@ -36,18 +36,25 @@ if (url_count == 0 or url_count < image_index):
 
   conn.commit()
 
-# tweeted = False
+tweeted = False
 
-# while not tweeted:
-#   try:
-#     url = url_list[image_index]
-#     image_index += 1
-#     print("Attempting tweet of image url: {}".format(url))
-#     api.PostUpdate(". @CarterAlzamora @Houghelpuf", media=url)
-#     tweeted = True
-#   except twitter.error.TwitterError as err:
-#     print("Tweet failed with error: {}".format(err))
+while not tweeted:
+  try:
+    cur.execute("SELECT url FROM images WHERE id=%s;", [image_index])
+    url = cur.fetchone()[0]
+    image_index += 1
+    print("Attempting tweet of image url: {}".format(url))
+    api.PostUpdate(". @CarterAlzamora @Houghelpuf", media=url)
+    tweeted = True
+  except twitter.error.TwitterError as err:
+    print("Tweet failed with error: {}".format(err))
 
-# print("Tweet successful")
+print("Tweet successful")
+
+cur.execute("UPDATE index SET img_index = %s;", [image_index])
+conn.commit()
+
+curr.close()
+conn.close()
 
 print("Process Complete")
